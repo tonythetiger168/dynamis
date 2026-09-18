@@ -8,10 +8,12 @@
 set -uo pipefail
 cd "$(dirname "$0")/.."
 
-export VERILATOR_ROOT="${VERILATOR_ROOT:-/mnt/agents/output/verilator-5.052}"
+VERILATOR_ROOT="${VERILATOR_ROOT:-/mnt/agents/output/verilator-5.052}"
 if [ -x "$VERILATOR_ROOT/bin/verilator" ]; then
+  export VERILATOR_ROOT
   V="$VERILATOR_ROOT/bin/verilator"
 else
+  unset VERILATOR_ROOT   # let the system verilator wrapper find its own root
   V="$(command -v verilator)" || { echo "verilator not found"; exit 2; }
 fi
 
