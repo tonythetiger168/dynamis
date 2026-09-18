@@ -1,0 +1,19 @@
+# build artifacts
+obj_dir/
+*.o
+*.d
+
+# simulation outputs (regenerate via ci/run_regression.sh)
+tx/examples/tx.jsonl
+*.vcd
+*.tx.json
+tx/txdiff_report.json
+tx/txview_fail.html
+
+# python
+__pycache__/
+*.pyc
+
+# os/editor
+.DS_Store
+*.swp

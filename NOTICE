@@ -1,0 +1,11 @@
+Dynamis
+Copyright 2026 Dynamis
+
+This product includes software developed by the Dynamis project
+(https://github.com/dynamis-eda).
+
+Dynamis Core's simulation semantics were cross-validated against
+Verilator 5.052 (https://verilator.org), released under the GNU Lesser
+General Public License v3. Verilator is not a dependency of this
+project; it was used only as an independent correctness oracle during
+development.

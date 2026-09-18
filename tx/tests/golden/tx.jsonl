@@ -1,0 +1,5 @@
+{"kind":"write","t":15,"payload":"addr=0,data=0"}
+{"kind":"write","t":25,"payload":"addr=1,data=16"}
+{"kind":"write","t":35,"payload":"addr=2,data=32"}
+{"kind":"write","t":45,"payload":"addr=3,data=48"}
+{"kind":"done","t":45,"payload":"count=3"}

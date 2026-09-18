@@ -1,0 +1,24 @@
+name: transaction-regression
+
+on: [push, pull_request]
+
+jobs:
+  tx-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Verilator
+        run: sudo apt-get update && sudo apt-get install -y verilator
+
+      - name: Transaction regression gate
+        run: ci/run_regression.sh
+
+      - name: Upload evidence on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tx-evidence
+          path: |
+            txview_fail.html
+            txdiff_report.json
