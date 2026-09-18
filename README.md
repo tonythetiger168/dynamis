@@ -1,7 +1,7 @@
 # Dynamis
 
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
-[![CI: transaction regression gate](https://github.com/dynamis-eda/dynamis/actions/workflows/regression.yml/badge.svg)](../../actions)
+[![CI: transaction regression gate](https://github.com/tonythetiger168/dynamis/actions/workflows/regression.yml/badge.svg)](../../actions)
 
 ![Dynamis — transactions rendered on top of the waveform](docs/hero.png)
 
