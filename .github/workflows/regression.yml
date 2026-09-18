@@ -12,7 +12,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y verilator
 
       - name: Transaction regression gate
-        run: tx/ci/run_regression.sh
+        run: bash tx/ci/run_regression.sh
 
       - name: Upload evidence on failure
         if: failure()
