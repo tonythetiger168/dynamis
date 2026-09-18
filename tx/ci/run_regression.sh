@@ -18,8 +18,8 @@ fi
 echo "=== [1/3] simulate + record (Verilator + DPI) ==="
 cd examples
 rm -rf obj_dir tx.jsonl
-"$V" --binary --timing -Wno-fatal -I../src ../src/txdpi.cpp tx_demo_tb.sv \
-     -o Vdemo > /tmp/tx_ci_build.log 2>&1 || { tail -5 /tmp/tx_ci_build.log; exit 2; }
+"$V" --binary --timing -Wno-fatal -I../src ../src/tx_pkg.sv ../src/txdpi.cpp tx_demo_tb.sv \
+     -o Vdemo > /tmp/tx_ci_build.log 2>&1 || { tail -20 /tmp/tx_ci_build.log; exit 2; }
 ./obj_dir/Vdemo > /dev/null
 cd ..
 echo "recorded $(wc -l < examples/tx.jsonl) transactions"
