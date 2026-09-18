@@ -9,7 +9,11 @@ set -uo pipefail
 cd "$(dirname "$0")/.."
 
 export VERILATOR_ROOT="${VERILATOR_ROOT:-/mnt/agents/output/verilator-5.052}"
-V="$VERILATOR_ROOT/bin/verilator"
+if [ -x "$VERILATOR_ROOT/bin/verilator" ]; then
+  V="$VERILATOR_ROOT/bin/verilator"
+else
+  V="$(command -v verilator)" || { echo "verilator not found"; exit 2; }
+fi
 
 echo "=== [1/3] simulate + record (Verilator + DPI) ==="
 cd examples
