@@ -12,8 +12,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Verilator
-        run: sudo apt-get update && sudo apt-get install -y verilator
+      - name: Build Verilator 5.052 from source
+        # apt verilator is 5.020: cannot link UVM 1800.2 forward class refs (V3LinkDot "Bad package link").
+        # UVM needs >= 5.038; build v5.052 (see docs/uvm-on-verilator.md).
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git help2man perl python3 make autoconf g++ flex bison ccache
+          git clone --depth 1 --branch v5.052 https://github.com/verilator/verilator /tmp/verilator
+          cd /tmp/verilator
+          autoconf && ./configure
+          make -j"$(nproc)"
+          sudo make install
+          verilator --version
 
       - name: Fetch UVM (IEEE 1800.2 core)
         run: |
@@ -28,7 +38,7 @@ jobs:
       - name: Build UVM + Dynamis TX demo
         run: |
           cd tx/examples
-          verilator --binary --timing -Wno-fatal -Wno-PKGNODECL -j 4 \
+          verilator --binary --timing -Wno-fatal -j 4 \
             +define+UVM_HDL_NO_DPI \
             +incdir+/tmp/uvm/src +incdir+/tmp/uvm/src/macros \
             /tmp/uvm/src/uvm_pkg.sv /tmp/uvm_dpi_patched.cc \
