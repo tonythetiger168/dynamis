@@ -28,7 +28,7 @@ jobs:
       - name: Build UVM + Dynamis TX demo
         run: |
           cd tx/examples
-          verilator --binary --timing -Wno-fatal -j 4 \
+          verilator --binary --timing -Wno-fatal -Wno-PKGNODECL -j 4 \
             +define+UVM_HDL_NO_DPI \
             +incdir+/tmp/uvm/src +incdir+/tmp/uvm/src/macros \
             /tmp/uvm/src/uvm_pkg.sv /tmp/uvm_dpi_patched.cc \
