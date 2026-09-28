@@ -1,0 +1,51 @@
+# UVM 1.2 on Verilator — experimental end-to-end (recipe: docs/uvm-on-verilator.md)
+name: uvm-experimental
+
+on:
+  workflow_dispatch:      # manual trigger: full UVM build is ~30 min
+  schedule:
+    - cron: '0 6 * * 0'   # weekly
+
+jobs:
+  uvm-tx:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Verilator
+        run: sudo apt-get update && sudo apt-get install -y verilator
+
+      - name: Fetch UVM (IEEE 1800.2 core)
+        run: |
+          curl -sL -o /tmp/uvm.tgz https://codeload.github.com/accellera-official/uvm-core/tar.gz/refs/heads/main
+          mkdir -p /tmp/uvm && tar xzf /tmp/uvm.tgz -C /tmp/uvm --strip-components=1
+
+      - name: Exclude vendor-only uvm_hdl.c (workaround #7)
+        run: |
+          sed 's|#include "uvm_hdl.c"|/* excluded: no vendor backend */|' \
+              /tmp/uvm/src/dpi/uvm_dpi.cc > /tmp/uvm_dpi_patched.cc
+
+      - name: Build UVM + Dynamis TX demo
+        run: |
+          cd tx/examples
+          verilator --binary --timing -Wno-fatal -j 4 \
+            +define+UVM_HDL_NO_DPI \
+            +incdir+/tmp/uvm/src +incdir+/tmp/uvm/src/macros \
+            /tmp/uvm/src/uvm_pkg.sv /tmp/uvm_dpi_patched.cc \
+            ../src/tx_pkg.sv ../src/uvm_tx_pkg.sv ../src/txdpi.cpp \
+            uvm_tx_tb.sv -o Vuvm
+
+      - name: Run simulation (records tx.jsonl via DPI)
+        run: cd tx/examples && ./obj_dir/Vuvm
+
+      - name: Verify transaction database
+        run: |
+          test -s tx/examples/tx.jsonl
+          grep -c '"kind":"write"' tx/examples/tx.jsonl
+          python3 tx/tools/txdiff.py tx/tests/golden/tx.jsonl tx/examples/tx.jsonl || true
+
+      - name: Upload tx database
+        uses: actions/upload-artifact@v4
+        with:
+          name: uvm-tx-jsonl
+          path: tx/examples/tx.jsonl
