@@ -17,7 +17,7 @@ jobs:
         # UVM needs >= 5.038; build v5.052 (see docs/uvm-on-verilator.md).
         run: |
           sudo apt-get update
-          sudo apt-get install -y git help2man perl python3 make autoconf g++ flex bison ccache
+          sudo apt-get install -y git help2man perl python3 make autoconf g++ flex bison libfl-dev ccache
           git clone --depth 1 --branch v5.052 https://github.com/verilator/verilator /tmp/verilator
           cd /tmp/verilator
           autoconf && ./configure
