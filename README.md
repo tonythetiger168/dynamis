@@ -36,6 +36,8 @@ every simulator, one portable transaction database.
 
 ## Quick start
 
+Local Minisim／Helios TX integration and validation evidence are documented in [MINISIM_INTEGRATION.md](docs/MINISIM_INTEGRATION.md). This checkout's integration covers `tx/`; the `core/` directory mentioned above is absent at this revision.
+
 ```bash
 # record from a real simulation (Verilator shown; identical on VCS/Xcelium)
 cd tx/examples

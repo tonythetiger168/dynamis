@@ -22,14 +22,15 @@ import sys
 
 def load_transactions(path):
     """Return list of (t0, t1, kind, {field: value})."""
-    raw = open(path).read().strip()
+    with open(path, encoding="utf-8") as stream:
+        raw = stream.read().strip()
     txs = []
     if raw.startswith('['):                       # Dynamis Core JSON
         for r in json.loads(raw):
             txs.append((r['t0'], r['t1'], r['kind'],
                         {k: str(v) for k, v in r['fields'].items()}))
     else:                                         # DPI JSONL
-        for line in raw.splitlines():
+        for line in raw.split("\n"):
             line = line.strip()
             if not line:
                 continue
@@ -271,7 +272,7 @@ def main():
         body.append(f'<line x1="{x(t)}" y1="{TOP_H}" x2="{x(t)}" y2="{y_end}" class="tick"/>')
         body.append(f'<text x="{x(t)}" y="{TOP_H - 8}" text-anchor="middle" class="ticklbl">{int(t)}</text>')
     height = y_end + 40
-    open(out, 'w').write(HTML.format(title=esc(title), height=height,
+    open(out, 'w', encoding='utf-8').write(HTML.format(title=esc(title), height=height,
                                      body='\n'.join(body)))
     print(f"[txview] {out}: {len(txs)} transactions, "
           f"{len(vcd)} signals, t_max={t_max:.0f}")

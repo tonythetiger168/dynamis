@@ -6,18 +6,17 @@ reports transactions that are missing, extra, or field-mismatched.
 The CI gate: exit 0 = equivalent, exit 1 = differences found.
 
 usage:
-  python3 txdiff.py golden.json run.json [--ignore-time] [--json report.json]
+  python3 txdiff.py golden.json run.json [--with-time] [--json report.json]
 
 Comparison is per-kind, in-order (transaction N of kind K in run A is
 compared against transaction N of kind K in run B). Exact timestamps
 are ignored by default — regression equivalence is about WHAT happened,
-not exactly WHEN (use --ignore-time off to compare timestamps too).
+not exactly WHEN (use --with-time to compare timestamps too).
 """
 
 import json
 import sys
 
-sys.path.insert(0, __file__.rsplit('/', 1)[0])
 from txview import load_transactions      # reuse the normalizer
 
 
@@ -68,7 +67,7 @@ def main():
 
     if '--json' in args:
         out = args[args.index('--json') + 1]
-        with open(out, 'w') as f:
+        with open(out, 'w', encoding='utf-8') as f:
             json.dump({'a': a, 'b': b, 'diffs': diffs}, f, indent=1)
         print(f"[txdiff] report -> {out}")
 
