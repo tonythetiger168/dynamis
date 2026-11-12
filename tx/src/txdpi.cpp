@@ -24,10 +24,29 @@ void tx_open(const char* path) {
     }
 }
 
+
+// Escape bytes required by JSON while preserving UTF-8 payload bytes.
+static void tx_json_string(const char* text) {
+    fputc('"', g_log);
+    const unsigned char* p = (const unsigned char*)(text ? text : "");
+    for (; *p; ++p) {
+        if (*p == '"' || *p == 0x5c) { // quote or backslash
+            fputc(0x5c, g_log);
+            fputc(*p, g_log);
+        } else if (*p < 0x20) {
+            fprintf(g_log, "%cu%04x", 0x5c, (unsigned)*p);
+        } else fputc(*p, g_log);
+    }
+    fputc('"', g_log);
+}
+
 void tx_record(const char* kind, long long t, const char* payload) {
     if (!g_log) return;
-    fprintf(g_log, "{\"kind\":\"%s\",\"t\":%lld,\"payload\":\"%s\"}\n",
-            kind, t, payload ? payload : "");
+    fputs("{\"kind\":", g_log);
+    tx_json_string(kind);
+    fprintf(g_log, ",\"t\":%lld,\"payload\":", t);
+    tx_json_string(payload);
+    fputs("}\n", g_log);
     fflush(g_log);   // keep the DB valid even if the sim crashes
 }
 
